@@ -384,7 +384,8 @@ MonoBehaviour:
   crosshair: {fileID: 281158947}
   target: {fileID: 732498884}
   result: {fileID: 2123931890}
-  timer: 3
+  timer: 4
+  precision: 0.5
 --- !u!114 &1209888230
 MonoBehaviour:
   m_ObjectHideFlags: 0

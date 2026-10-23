@@ -11,9 +11,13 @@ public class ShootMinigame : MonoBehaviour
     public TextMeshProUGUI result;
 
     public float timer = 4f;
+    private float timer_length;
+    private float precision = 0.1f;
     private bool isTimerActive = false;
     private bool isPlayed = false;
     private bool canShoot = false;
+    private bool shot = false;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -21,6 +25,7 @@ public class ShootMinigame : MonoBehaviour
         crosshair.transform.position = new Vector2(360,710);
         target.transform.position = new Vector2(1260,710);
         result.gameObject.SetActive(false);
+        timer_length = timer;
     }
 
     // Update is called once per frame
@@ -35,42 +40,48 @@ public class ShootMinigame : MonoBehaviour
         {
             countdown();
         }
-        //Debug.Log(timer);
+        if (!shot)
+        {
+            Debug.Log(timer);
+        }
     }
 
     void countdown()
     {
-        bool shot = false;
         if (Keyboard.current.spaceKey.wasReleasedThisFrame)
         {
             canShoot = true;
         }
         timer -= Time.deltaTime;
 
-        crosshair.transform.position = new Vector2(360 + ((4f-timer) * 300), 710);
+        crosshair.transform.position = new Vector2(360 + ((timer_length-timer) * 300), 710);
         if (timer <= 0)
         {
             isTimerActive = false;
-            timer = 3f;
+            timer = timer_length;
+            result.gameObject.SetActive(true);
+            result.text = "Too Late!";
         }
 
-        Debug.Log(!shot && canShoot);
         if (Keyboard.current.spaceKey.wasPressedThisFrame && !shot && canShoot)
         {
-            if (timer >= 1.5)
+            if (timer >= 1f + precision)
             {
                 result.gameObject.SetActive(true);
                 result.text = "Too Early!";
             }
-            if (timer < 1.5 && timer > 0.5)
+            if (timer < 1f + precision && timer > 1f - precision)
             {
+                Debug.Log(1f+precision);
                 result.gameObject.SetActive(true);
+                result.text = "WIN!";
             }
-            if (timer < 0.5)
+            if (timer <= 1f - precision)
             {
                 result.gameObject.SetActive(true);
                 result.text = "Too Late!";
             }
+            shot = true;
         }
     }
 
