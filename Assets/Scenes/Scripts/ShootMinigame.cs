@@ -12,7 +12,7 @@ public class ShootMinigame : MonoBehaviour
 
     public float timer = 4f;
     private float timer_length;
-    private float precision = 0.1f;
+    private float precision = 0.15f;
     private bool isTimerActive = false;
     private bool isPlayed = false;
     private bool canShoot = false;
@@ -38,7 +38,7 @@ public class ShootMinigame : MonoBehaviour
         }   
         if (isTimerActive)
         {
-            countdown();
+            mainGame();
         }
         if (!shot)
         {
@@ -46,7 +46,7 @@ public class ShootMinigame : MonoBehaviour
         }
     }
 
-    void countdown()
+    void mainGame()
     {
         if (Keyboard.current.spaceKey.wasReleasedThisFrame)
         {
@@ -59,8 +59,11 @@ public class ShootMinigame : MonoBehaviour
         {
             isTimerActive = false;
             timer = timer_length;
-            result.gameObject.SetActive(true);
-            result.text = "Too Late!";
+            if (!shot)
+            {
+                result.gameObject.SetActive(true);
+                result.text = "You Didn't Even Try?!";
+            }
         }
 
         if (Keyboard.current.spaceKey.wasPressedThisFrame && !shot && canShoot)
@@ -74,7 +77,12 @@ public class ShootMinigame : MonoBehaviour
             {
                 Debug.Log(1f+precision);
                 result.gameObject.SetActive(true);
-                result.text = "WIN!";
+                Vector2 crosshairBounds = new Vector2(crosshair.transform.position.x - 50f, crosshair.transform.position.x + 50f);
+                Vector2 targetBounds = new Vector2(target.transform.position.x - 50f, target.transform.position.x + 50f);
+                float intersection = Mathf.Min(crosshairBounds.y, targetBounds.y) - Mathf.Max(crosshairBounds.x, targetBounds.x);  
+                float union = Mathf.Max(crosshairBounds.y, targetBounds.y) - Mathf.Min(crosshairBounds.x, targetBounds.x);
+                float score = Mathf.Round((intersection / union) * 10000f) / 100f;
+                result.text = "WIN! \n score = " + score;
             }
             if (timer <= 1f - precision)
             {
